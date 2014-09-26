@@ -32,6 +32,7 @@ class Menu():
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode(SCREEN_SIZE)
+        pygame.display.set_caption('Press enter to change the background color')
         self.clock = pygame.time.Clock()
         self.fps = 60
         self.keys = pygame.key.get_pressed()    
