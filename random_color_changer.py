@@ -35,7 +35,7 @@ class Menu():
         pygame.display.set_caption('Press enter to change the background color')
         self.clock = pygame.time.Clock()
         self.fps = 60
-        self.keys = pygame.key.get_pressed()    
+        self.keys = pygame.key.get_pressed()
 
         self.bg_color = (123, 153, 232)
 
