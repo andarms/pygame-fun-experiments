@@ -32,7 +32,6 @@ class Menu():
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode(SCREEN_SIZE)
-        pygame.display.set_caption('Press enter to change the background color')
         self.clock = pygame.time.Clock()
         self.fps = 60
         self.keys = pygame.key.get_pressed()
@@ -113,9 +112,9 @@ class Menu():
                     self.options[self.current_index].is_hover = False
                     old_index = self.current_index
                     self.current_index -= self.options_x_row
-                    if self.current_index < 0:
-                        aux = self.max_options + (self.max_options/self.options_x_row)
-                        self.current_index = aux + self.current_index
+                    if self.current_index < 0:                       
+                        aux = self.options_x_row * ((self.max_options / self.options_x_row) + 1)
+                        self.current_index += aux 
                         if self.current_index >= self.max_options:
                             self.current_index -= self.options_x_row
                     
@@ -138,6 +137,9 @@ class Menu():
             self.screen.fill(self.bg_color)
             self.event_loop()
             self.update()
+
+            caption = "{} - FPS: {:.2f}".format('press enter to change color', self.clock.get_fps())
+            pygame.display.set_caption(caption)
 
             pygame.display.update()
             self.clock.tick(self.fps)

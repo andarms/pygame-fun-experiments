@@ -38,7 +38,7 @@ def main():
         if c.done:
             bg_color = (123, 234, 231)
 
-        caption = "{} - FPS: {:.2f}".format('CAPTION',clock.get_fps())
+        caption = "{} - FPS: {:.2f}".format('Threds test',clock.get_fps())
         pygame.display.set_caption(caption)
         pygame.display.flip()
         clock.tick(60)
