@@ -1,4 +1,4 @@
 pygame-fun-experiments
 ======================
 
-Some samples and experiments made for me, for fun and learn pygame
+Some samples and experiments made by me, for fun and learn pygame
