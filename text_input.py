@@ -11,6 +11,7 @@ class TextCursor():
 		self.y = y
 		self.height = height
 		self.spacing = spacing
+		self.pos = 0
 		self.ticks = 0
 
 	def update(self):
@@ -25,10 +26,13 @@ class TextCursor():
 			pygame.draw.line(screen, (0,0,150), p1, p2, 3)
 
 	def move_left(self):
-		self.x -= self.spacing
+		if self.x > self.init_x:
+			self.x -= self.spacing
+			self.pos -= 1
 
 	def move_right(self):
 		self.x += self.spacing
+		self.pos += 1
 		
 
 class TextInput:
@@ -54,13 +58,34 @@ class TextInput:
 		self.cursor.update()
 
 	def handle_input(self, event):
-		if event.key == 8: # delete keycode
-			self.message = self.message[:-1]
+		if event.key == pygame.K_BACKSPACE: # delete keycode
+			if len(self.message) > 0:
+				if self.cursor.pos == len(self.message):
+					self.message = self.message[:-1]
+				else:
+					text = self.message[:self.cursor.pos-1]
+					text += self.message[self.cursor.pos:]
+					self.message = text
+				self.cursor.move_left()
+		elif event.key == pygame.K_DELETE: # delete keycode
+			if len(self.message) > 0:
+				if self.cursor.pos < len(self.message):
+					text = self.message[:self.cursor.pos]
+					text += self.message[self.cursor.pos+1:]
+					self.message = text
+		elif event.key == pygame.K_LEFT:
 			self.cursor.move_left()
-		else:
-			if event.unicode != "\r" and len(self.message) < self.max_chars:
-				self.message += event.unicode
+		elif event.key == pygame.K_RIGHT:
+			if self.cursor.pos < len(self.message):
 				self.cursor.move_right()
+		else:
+			if event.unicode != "\r" and event.unicode != "":
+				if len(self.message) < self.max_chars:
+					text = self.message[:self.cursor.pos] 
+					text += event.unicode 
+					text += self.message[self.cursor.pos:]
+					self.message = text
+					self.cursor.move_right()
 
 	def render(self, screen):
 		pygame.draw.rect(screen, self.fg_color, self.rect)
@@ -69,6 +94,9 @@ class TextInput:
 			rect = text_surface.get_rect(x=self.rect.x + 20, y=self.rect.y + 5)
 			screen.blit(text_surface, rect)
 		self.cursor.render(screen)
+
+	def get_text(self):
+		return self.message
 
 
 class Game:
