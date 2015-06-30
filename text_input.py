@@ -9,14 +9,15 @@ class Game:
 
 		self.screen_size = (300, 240)
 		self.bg_color = (255, 255, 255)
-		self.rect_color = (0, 0, 255)
+		self.text_color = (0, 0, 255)
+		self.font = pygame.font.Font('cool_menu/visitor2.ttf', 40)
+		self.message = ""
 
 		self.fps = 60
 
 		self.screen = pygame.display.set_mode(self.screen_size)
 		self.clock = pygame.time.Clock()
-
-		self.rect = pygame.Rect(20, 20, 50, 50)
+		
 
 	def handle_input(self):
 		for event in pygame.event.get():
@@ -24,13 +25,19 @@ class Game:
 				pygame.quit()
 				sys.exit()
 
+			if event.type == pygame.KEYDOWN:
+				self.message += event.unicode
+
 	def update(self):
 		capition = "Hola mundo - FPS: {:.2f}".format(self.clock.get_fps())
 		pygame.display.set_caption(capition)
 
 	def render(self):
 		self.screen.fill(self.bg_color)
-		pygame.draw.rect(self.screen, self.rect_color, self.rect)
+		if self.message:
+			text_surface = self.font.render(self.message, 1, self.text_color)
+			rect = text_surface.get_rect(x=50, y=50)
+			self.screen.blit(text_surface, rect)
 
 	def main_loop(self):
 		while True:
