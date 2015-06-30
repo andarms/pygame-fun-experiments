@@ -26,10 +26,13 @@ class Game:
 				sys.exit()
 
 			if event.type == pygame.KEYDOWN:
-				self.message += event.unicode
+				if event.key == 8: # delete keycode
+					self.message = self.message[:-1]
+				else:
+					self.message += event.unicode
 
 	def update(self):
-		capition = "Hola mundo - FPS: {:.2f}".format(self.clock.get_fps())
+		capition = "Text input test - FPS: {:.2f}".format(self.clock.get_fps())
 		pygame.display.set_caption(capition)
 
 	def render(self):
