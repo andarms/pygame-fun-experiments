@@ -6,6 +6,8 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 
+GRAVITY = 9.81
+
 LEVEL_MAP = [
 	'##############################',
 	'#                            #',
@@ -22,7 +24,7 @@ LEVEL_MAP = [
 	'#                            #',
 	'#                            #',
 	'#                            #',
-	'#                            #',
+	'#      ##########            #',
 	'#                            #',
 	'#                            #',
 	'#                            #',
@@ -71,43 +73,59 @@ class Player(pg.sprite.Sprite):
 		self.speed = 5
 		self.vx = 0
 		self.vy = 0
+		self.jump_power = -1.03
+		self.max_jump_length = -15
 
 		self.runing = False
+		self.falling = True
+		self.jumping = False
+		
 
 	def handle_input(self, keys):
 		self.runing = False
 		self.vx = 0
-		self.vy = 0
 		if keys[pg.K_LEFT]:
 			self.vx = -self.speed
 			self.runing = True
-		elif keys[pg.K_RIGHT]:
+		if keys[pg.K_RIGHT]:
 			self.vx = self.speed
 			self.runing = True
-		elif keys[pg.K_UP]:
-			self.vy = -self.speed
-			self.runing = True
-		elif keys[pg.K_DOWN]:
-			self.vy = self.speed
-			self.runing = True
+		if keys[pg.K_UP]:
+			self.jumping = True
 
 	def update(self, level):
+
 		if self.runing:
 			self.rect.x += self.vx
-			collitions = pg.sprite.spritecollide(self, level, False)
-			if collitions:
-				if self.vx > 0:
-					self.rect.right = collitions[0].rect.left
-				else:
-					self.rect.left = collitions[0].rect.right
 
-			self.rect.y += self.vy
-			collitions = pg.sprite.spritecollide(self, level, False)
-			if collitions:
-				if self.vy > 0:
-					self.rect.bottom = collitions[0].rect.top
-				else:
-					self.rect.top = collitions[0].rect.bottom
+		collitions = pg.sprite.spritecollide(self, level, False)
+		if collitions:
+			if self.vx > 0:
+				self.rect.right = collitions[0].rect.left
+			else:
+				self.rect.left = collitions[0].rect.right
+
+		if self.jumping and not self.falling:
+			self.vy += self.jump_power
+			if self.vy < self.max_jump_length:
+				self.falling = True
+				self.vy = 0
+				self.jumping = False
+
+		self.rect.y += self.vy
+		
+		if self.falling:
+			self.rect.y += GRAVITY
+			
+		collitions = pg.sprite.spritecollide(self, level, False)
+		if collitions:
+			if self.falling:
+				self.rect.bottom = collitions[0].rect.top
+				self.falling = False
+			else:
+				self.rect.top = collitions[0].rect.bottom
+		elif not self.jumping:
+			self.falling = True
 
 
 
