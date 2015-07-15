@@ -6,7 +6,7 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 
-GRAVITY = 9.81
+GRAVITY = 15 #px/s
 
 LEVEL_MAP = [
 	'##############################',
@@ -18,14 +18,14 @@ LEVEL_MAP = [
 	'#                            #',
 	'#                            #',
 	'#                            #',
+	'#                            #',
+	'#                            #',
+	'#                            #',
+	'#                            #',
 	'#                #############',
 	'#                            #',
 	'#                            #',
-	'#                            #',
-	'#                            #',
-	'#                            #',
 	'#      ##########            #',
-	'#                            #',
 	'#                            #',
 	'#                            #',
 	'##############################'
@@ -70,11 +70,14 @@ class Player(pg.sprite.Sprite):
 		self.rect.x = x
 		self.rect.y = y
 
-		self.speed = 5
+		self.speed = 100 # px/s
+		self.accel =  0.046875
+		self.max_speed =  250 # px/s
 		self.vx = 0
 		self.vy = 0
-		self.jump_power = -1.03
-		self.max_jump_length = -15
+		self.jump_power = -1
+		self.jump_speed = 0.05
+		self.max_jump_length = -100
 
 		self.runing = False
 		self.falling = True
@@ -93,10 +96,21 @@ class Player(pg.sprite.Sprite):
 		if keys[pg.K_UP]:
 			self.jumping = True
 
-	def update(self, level):
+	@property
+	def accelerate(self):
+		if self.speed > self.max_speed:
+			return self.max_speed
+		self.speed += self.accel
+		return self.speed
 
+	def cut_jump(self):
+		self.jumping = False
+		self.max_jump_length = -100
+		self.vy = 0
+
+	def update(self, level, dt):
 		if self.runing:
-			self.rect.x += self.vx
+			self.rect.x += self.vx * dt
 
 		collitions = pg.sprite.spritecollide(self, level, False)
 		if collitions:
@@ -105,28 +119,28 @@ class Player(pg.sprite.Sprite):
 			else:
 				self.rect.left = collitions[0].rect.right
 
-		if self.jumping and not self.falling:
-			self.vy += self.jump_power
-			if self.vy < self.max_jump_length:
-				self.falling = True
-				self.vy = 0
-				self.jumping = False
 
-		self.rect.y += self.vy
+		if self.jumping:
+			self.vy +=  self.max_jump_length
+			self.max_jump_length += GRAVITY
+			if self.vy >= 0:
+				self.cut_jump()
 		
-		if self.falling:
-			self.rect.y += GRAVITY
+		if self.falling and not self.jumping:
+			self.vy += GRAVITY
 			
+		self.rect.y += self.vy * dt
+		
 		collitions = pg.sprite.spritecollide(self, level, False)
 		if collitions:
-			if self.falling:
+			if self.falling and self.vy >= 0:
 				self.rect.bottom = collitions[0].rect.top
 				self.falling = False
+				self.vy = 0
 			else:
 				self.rect.top = collitions[0].rect.bottom
-		elif not self.jumping:
-			self.falling = True
-
+				if self.jumping: self.cut_jump()
+		else: self.falling = True
 
 
 	def render(self, screen):
@@ -159,10 +173,10 @@ class Game:
 		self.player.handle_input(self.keys)
 
 
-	def update(self):
+	def update(self, dt):
 		capition = "Platformer - FPS: {:.2f}".format(self.clock.get_fps())
 		pg.display.set_caption(capition)
-		self.player.update(self.level)
+		self.player.update(self.level, dt)
 
 	def render(self):
 		self.screen.fill(self.bg_color)
@@ -171,12 +185,12 @@ class Game:
 
 	def main_loop(self):
 		while True:
+			time_delta = self.clock.tick(self.fps)/1000.0
 			self.handle_input()
-			self.update()
+			self.update(time_delta)
 			self.render()
 
 			pg.display.flip()
-			self.clock.tick(self.fps)
 
 
 
