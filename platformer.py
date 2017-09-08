@@ -109,7 +109,7 @@ class Player(pg.sprite.Sprite):
 		self.vy = 0
 
 	def update(self, level, dt):
-		print self.rect.x
+		print(self.rect.x)
 		if self.runing:
 			self.rect.x += self.vx * dt
 

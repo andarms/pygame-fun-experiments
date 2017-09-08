@@ -23,11 +23,11 @@ image.fill(bg_color)
 
 width = SCREEN_HEIGHT
 
-print "Creating wallpaper wait please..."
+print("Creating wallpaper wait please...")
 
 canvas_w = SCREEN_WIDTH - max_size
 canvas_h = SCREEN_HEIGHT - max_size
-for x in xrange(amount):
+for x in range(amount):
 	size = random.randint(min_size, max_size)
 	x = random.randint(0, canvas_w)
 	y = random.randint(0, canvas_h)
@@ -38,6 +38,6 @@ for x in xrange(amount):
 
 
 pg.image.save(image, 'wallpaper.png')
-print "Done."
+print("Done.")
 pg.quit()
 sys.exit()

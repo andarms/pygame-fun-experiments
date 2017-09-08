@@ -53,7 +53,7 @@ class Menu():
         initial_x = (((SCREEN_WIDTH - aux) / 2) + (self.space / 2))
         x = initial_x
         y = 10
-        for i in xrange(self.max_options):
+        for i in range(self.max_options):
             option = Option(x, y, self.rect_width, self.rect_height, i)
             option.color = [random.randint(0, 255) for _ in range(3)]
             self.options.append(option)
