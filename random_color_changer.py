@@ -12,23 +12,26 @@ from math import ceil
 
 import pygame
 
-SCREEN_SIZE = SCREEN_WIDTH, SCREEN_HEIGHT =(820, 600)
+SCREEN_SIZE = SCREEN_WIDTH, SCREEN_HEIGHT = (820, 600)
 HOVER_COLOR = (21, 88, 177)
 SEL_COLOR = (215, 218, 34)
+
 
 class Option(pygame.Rect):
     """
     Extending the pygame.Rect to add some helpful features.
     """
+
     def __init__(self, x, y, w, h, i):
         super(Option, self).__init__(x, y, w, h)
         self.is_hover = False
         self.is_selected = False
         self.index = i
-        self.color = (0,0,0)
-        
+        self.color = (0, 0, 0)
+
 
 class Menu():
+
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode(SCREEN_SIZE)
@@ -43,10 +46,11 @@ class Menu():
         self.rect_width = 80
         self.rect_height = 80
         self.space = 20
-        self.options_x_row = int(ceil(SCREEN_WIDTH / (self.rect_width + self.space)))
+        self.options_x_row = int(
+            ceil(SCREEN_WIDTH / (self.rect_width + self.space)))
 
-        self.current_index = 0 # the current rect
-        self.current_selected = None # the last rect selected
+        self.current_index = 0  # the current rect
+        self.current_selected = None  # the last rect selected
 
         # A little magic of math to center rects on the screen
         aux = (self.rect_width + self.space) * self.options_x_row
@@ -64,9 +68,6 @@ class Menu():
 
         self.options[0].is_hover = True
 
-
-
-
     def update(self):
 
         for option in self.options:
@@ -74,7 +75,7 @@ class Menu():
 
             if option.is_hover:
                 pygame.draw.rect(self.screen, HOVER_COLOR, option, 5)
-                
+
             if option.is_selected:
                 pygame.draw.rect(self.screen, SEL_COLOR, option, 5)
 
@@ -112,25 +113,22 @@ class Menu():
                     self.options[self.current_index].is_hover = False
                     old_index = self.current_index
                     self.current_index -= self.options_x_row
-                    if self.current_index < 0:                       
-                        aux = self.options_x_row * ((self.max_options / self.options_x_row) + 1)
-                        self.current_index += aux 
+                    if self.current_index < 0:
+                        aux = self.options_x_row * \
+                            ((self.max_options / self.options_x_row) + 1)
+                        self.current_index += aux
                         if self.current_index >= self.max_options:
                             self.current_index -= self.options_x_row
-                    
-                    self.options[self.current_index].is_hover = True
 
+                    self.options[self.current_index].is_hover = True
 
                 if event.key == pygame.K_DOWN:
                     self.options[self.current_index].is_hover = False
                     old_index = self.current_index
                     self.current_index += self.options_x_row
                     if self.current_index > self.max_options:
-                        self.current_index =  old_index % self.options_x_row
+                        self.current_index = old_index % self.options_x_row
                     self.options[self.current_index].is_hover = True
-
-
-
 
     def main_loop(self):
         while True:
@@ -138,7 +136,8 @@ class Menu():
             self.event_loop()
             self.update()
 
-            caption = "{} - FPS: {:.2f}".format('press enter to change color', self.clock.get_fps())
+            caption = "{} - FPS: {:.2f}".format(
+                'press enter to change color', self.clock.get_fps())
             pygame.display.set_caption(caption)
 
             pygame.display.update()
